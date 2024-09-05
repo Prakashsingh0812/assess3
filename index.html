@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Todo List App</title>
+</head>
+<body>
+    <div id="root"></div>
+    <script src="https://www.unpkg.com/react@18.2.0/umd/react.development.js"></script>
+    <script src="https://www.unpkg.com/react-dom@18.2.0/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script type="text/babel">
+        const { useState } = React;
+
+// TodoItem Component
+const TodoItem = ({ todo, toggleComplete }) => {
+    return (
+        <div>
+            <input
+                type="checkbox"
+                checked={todo.completed}
+                onChange={() => toggleComplete(todo.id)}
+            />
+            {todo.text}
+        </div>
+    );
+};
+
+// TodoList Component
+const TodoList = () => {
+    const [todos, setTodos] = useState([
+        { id: 1, text: 'Learn React', completed: false },
+        { id: 2, text: 'Build a Todo App', completed: true },
+    ]);
+    const [filter, setFilter] = useState('all');
+
+    const toggleComplete = (id) => {
+        setTodos(todos.map(todo =>
+            todo.id === id ? { ...todo, completed: !todo.completed } : todo
+        ));
+    };
+
+    const filteredTodos = todos.filter(todo => {
+        if (filter === 'completed') return todo.completed;
+        if (filter === 'pending') return !todo.completed;
+        return true;
+    });
+
+    return (
+        <div>
+            <h1>Todo List</h1>
+            <div>
+                <button onClick={() => setFilter('all')}>All</button>
+                <button onClick={() => setFilter('completed')}>Completed</button>
+                <button onClick={() => setFilter('pending')}>Pending</button>
+            </div>
+            {filteredTodos.map(todo => (
+                <TodoItem
+                    key={todo.id}
+                    todo={todo}
+                    toggleComplete={toggleComplete}
+                />
+            ))}
+        </div>
+    );
+};
+
+// Render TodoList component
+ReactDOM.render(
+    <React.StrictMode>
+        <TodoList />
+    </React.StrictMode>,
+    document.getElementById('root')
+);
+    </script>
+</body>
+</html>
